@@ -13,7 +13,7 @@
 
 
 
-<title>Spark基础环境配置 | Hope</title>
+<title>Spark Local &amp; Standalone模式配置指南 | Hope</title>
 
 
 
@@ -203,7 +203,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Spark基础环境配置</h1>
+            <h1 class="post-title">Spark Local &amp; Standalone模式配置指南</h1>
             
                 <div class="post-meta">
                     
@@ -212,7 +212,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">六月 4, 2025&nbsp;&nbsp;13:19:30</a>
+                        Date: <a href="#">六月 3, 2025&nbsp;&nbsp;15:30:00</a>
                         </span>
                     
                     
@@ -228,16 +228,27 @@
         </header>
 
         <div class="post-content">
-            <h2 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h2><h3 id="1-JDK安装"><a href="#1-JDK安装" class="headerlink" title="1. JDK安装"></a>1. JDK安装</h3><p>Spark运行需要Java环境，推荐JDK 8或11：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Ubuntu/Debian</span></span><br><span class="line"><span class="built_in">sudo</span> apt install openjdk-11-jdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># CentOS/RHEL</span></span><br><span class="line"><span class="built_in">sudo</span> yum install java-11-openjdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">java -version# 下载Hadoop（以3.3.6为例）</span><br><span class="line">wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz</span><br><span class="line">tar -xzf hadoop-3.3.6.tar.gz</span><br><span class="line"><span class="built_in">mv</span> hadoop-3.3.6 /opt/hadoop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export HADOOP_HOME=/opt/hadoop&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=$PATH:$HADOOP_HOME/bin&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">hadoop version</span><br></pre></td></tr></table></figure>
+            <h2 id="一、Spark-Local模式配置"><a href="#一、Spark-Local模式配置" class="headerlink" title="一、Spark Local模式配置"></a>一、Spark Local模式配置</h2><h3 id="1-安装Spark"><a href="#1-安装Spark" class="headerlink" title="1. 安装Spark"></a>1. 安装Spark</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载Spark（建议使用国内镜像加速）</span></span><br><span class="line">wget https://mirrors.bfsu.edu.cn/apache/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压并安装</span></span><br><span class="line">tar -xzf spark-3.5.0-bin-hadoop3.tgz</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mv</span> spark-3.5.0-bin-hadoop3 /opt/spark</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export SPARK_HOME=/opt/spark&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
 
-<h2 id="二、Hadoop单机模式安装"><a href="#二、Hadoop单机模式安装" class="headerlink" title="二、Hadoop单机模式安装"></a>二、Hadoop单机模式安装</h2><p>Spark通常与Hadoop协同工作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 下载Hadoop（以3.3.6为例）</span><br><span class="line">wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz</span><br><span class="line">tar -xzf hadoop-3.3.6.tar.gz</span><br><span class="line">mv hadoop-3.3.6 /opt/hadoop</span><br><span class="line"></span><br><span class="line"># 配置环境变量</span><br><span class="line">echo &#x27;export HADOOP_HOME=/opt/hadoop&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">echo &#x27;export PATH=$PATH:$HADOOP_HOME/bin&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">source ~/.bashrc</span><br><span class="line"></span><br><span class="line"># 测试</span><br><span class="line">hadoop version</span><br></pre></td></tr></table></figure>
+<h3 id="2-本地模式测试"><a href="#2-本地模式测试" class="headerlink" title="2. 本地模式测试"></a>2. 本地模式测试</h3><p>启动PySpark交互式环境：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspark</span><br></pre></td></tr></table></figure>
 
-<h2 id="三、Zookeeper安装"><a href="#三、Zookeeper安装" class="headerlink" title="三、Zookeeper安装"></a>三、Zookeeper安装</h2><p>用于后续Spark HA模式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 下载Zookeeper（以3.8.3为例）</span><br><span class="line">wget https://downloads.apache.org/zookeeper/zookeeper-3.8.3/apache-zookeeper-3.8.3-bin.tar.gz</span><br><span class="line">tar -xzf apache-zookeeper-3.8.3-bin.tar.gz</span><br><span class="line">mv apache-zookeeper-3.8.3-bin /opt/zookeeper</span><br><span class="line"></span><br><span class="line"># 配置</span><br><span class="line">cd /opt/zookeeper/conf</span><br><span class="line">cp zoo_sample.cfg zoo.cfg</span><br><span class="line">sed -i &#x27;s|dataDir=/tmp/zookeeper|dataDir=/opt/zookeeper/data|&#x27; zoo.cfg</span><br><span class="line"></span><br><span class="line"># 启动</span><br><span class="line">/opt/zookeeper/bin/zkServer.sh start</span><br></pre></td></tr></table></figure>
+<p>执行测试代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 创建RDD并计算</span><br><span class="line">rdd = sc.parallelize(range(1, 6))</span><br><span class="line">sum_result = rdd.reduce(lambda a, b: a + b)</span><br><span class="line">print(f&quot;计算结果: &#123;sum_result&#125;&quot;)  # 输出应为15</span><br></pre></td></tr></table></figure>
 
-<h2 id="四、环境验证"><a href="#四、环境验证" class="headerlink" title="四、环境验证"></a>四、环境验证</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 检查所有服务</span><br><span class="line">java -version</span><br><span class="line">hadoop version</span><br><span class="line">/opt/zookeeper/bin/zkServer.sh status</span><br></pre></td></tr></table></figure>
+<h2 id="二、Spark-Standalone集群模式"><a href="#二、Spark-Standalone集群模式" class="headerlink" title="二、Spark Standalone集群模式"></a>二、Spark Standalone集群模式</h2><h3 id="1-集群配置"><a href="#1-集群配置" class="headerlink" title="1. 集群配置"></a>1. 集群配置</h3><p>编辑Spark环境配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /opt/spark/conf/spark-env.sh.template /opt/spark/conf/spark-env.sh</span><br><span class="line">sudo nano /opt/spark/conf/spark-env.sh</span><br></pre></td></tr></table></figure>
+
+<p>添加以下配置:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 基础配置</span><br><span class="line">export SPARK_MASTER_HOST=hadoop-master</span><br><span class="line">export SPARK_WORKER_CORES=4</span><br><span class="line">export SPARK_WORKER_MEMORY=8g</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-启动集群服务"><a href="#2-启动集群服务" class="headerlink" title="2. 启动集群服务"></a>2. 启动集群服务</h3><p>主节点执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/spark/sbin/start-master.sh</span><br></pre></td></tr></table></figure>
+
+<p><strong>从节点执行</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/spark/sbin/start-worker.sh spark://hadoop-master:7077</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-提交分布式任务"><a href="#3-提交分布式任务" class="headerlink" title="3. 提交分布式任务"></a>3. 提交分布式任务</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spark-submit \</span><br><span class="line">  --master spark://hadoop-master:7077 \</span><br><span class="line">  --executor-memory 2G \</span><br><span class="line">  --total-executor-cores 8 \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  /opt/spark/examples/jars/spark-examples_2.12-3.5.0.jar 100</span><br></pre></td></tr></table></figure>
         </div>
 
         
@@ -251,7 +262,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://hope-5114.github.io/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">https://hope-5114.github.io/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</a></span>
+                        <span><a href="https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/">https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/</a></span>
                     </p>
                 
                 
@@ -277,11 +288,11 @@
                     
                         <a href="/tags/Spark/"># Spark</a>
                     
-                        <a href="/tags/Hadoop/"># Hadoop</a>
+                        <a href="/tags/Local%E6%A8%A1%E5%BC%8F/"># Local模式</a>
                     
-                        <a href="/tags/JDK/"># JDK</a>
+                        <a href="/tags/Standalone%E6%A8%A1%E5%BC%8F/"># Standalone模式</a>
                     
-                        <a href="/tags/Zookeeper/"># Zookeeper</a>
+                        <a href="/tags/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/"># 集群部署</a>
                     
                         
                 </span>
@@ -294,8 +305,10 @@
         </section>
         <section class="post-nav">
             
+                <a class="prev" rel="prev" href="/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">Spark基础环境配置</a>
             
-            <a class="next" rel="next" href="/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/">Spark Local & Standalone模式配置指南</a>
+            
+            <a class="next" rel="next" href="/2025/06/03/hello-world/">Hello World</a>
             
         </section>
 
