@@ -13,7 +13,7 @@
 
 
 
-<title>Hello World | Hope</title>
+<title>Spark基础环境配置 | Hope</title>
 
 
 
@@ -203,7 +203,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Hello World</h1>
+            <h1 class="post-title">Spark基础环境配置</h1>
             
                 <div class="post-meta">
                     
@@ -212,29 +212,32 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">六月 3, 2025&nbsp;&nbsp;14:03:41</a>
+                        Date: <a href="#">六月 4, 2025&nbsp;&nbsp;13:19:30</a>
                         </span>
                     
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF/">大数据技术</a>
+                            
+                        </span>
                     
                 </div>
             
         </header>
 
         <div class="post-content">
-            <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+            <h2 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h2><h3 id="1-JDK安装"><a href="#1-JDK安装" class="headerlink" title="1. JDK安装"></a>1. JDK安装</h3><p>Spark运行需要Java环境，推荐JDK 8或11：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Ubuntu/Debian</span></span><br><span class="line"><span class="built_in">sudo</span> apt install openjdk-11-jdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># CentOS/RHEL</span></span><br><span class="line"><span class="built_in">sudo</span> yum install java-11-openjdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">java -version# 下载Hadoop（以3.3.6为例）</span><br><span class="line">wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz</span><br><span class="line">tar -xzf hadoop-3.3.6.tar.gz</span><br><span class="line"><span class="built_in">mv</span> hadoop-3.3.6 /opt/hadoop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export HADOOP_HOME=/opt/hadoop&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=$PATH:$HADOOP_HOME/bin&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">hadoop version</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="二、Hadoop单机模式安装"><a href="#二、Hadoop单机模式安装" class="headerlink" title="二、Hadoop单机模式安装"></a>二、Hadoop单机模式安装</h2><p>Spark通常与Hadoop协同工作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 下载Hadoop（以3.3.6为例）</span><br><span class="line">wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz</span><br><span class="line">tar -xzf hadoop-3.3.6.tar.gz</span><br><span class="line">mv hadoop-3.3.6 /opt/hadoop</span><br><span class="line"></span><br><span class="line"># 配置环境变量</span><br><span class="line">echo &#x27;export HADOOP_HOME=/opt/hadoop&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">echo &#x27;export PATH=$PATH:$HADOOP_HOME/bin&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">source ~/.bashrc</span><br><span class="line"></span><br><span class="line"># 测试</span><br><span class="line">hadoop version</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<h2 id="三、Zookeeper安装"><a href="#三、Zookeeper安装" class="headerlink" title="三、Zookeeper安装"></a>三、Zookeeper安装</h2><p>用于后续Spark HA模式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 下载Zookeeper（以3.8.3为例）</span><br><span class="line">wget https://downloads.apache.org/zookeeper/zookeeper-3.8.3/apache-zookeeper-3.8.3-bin.tar.gz</span><br><span class="line">tar -xzf apache-zookeeper-3.8.3-bin.tar.gz</span><br><span class="line">mv apache-zookeeper-3.8.3-bin /opt/zookeeper</span><br><span class="line"></span><br><span class="line"># 配置</span><br><span class="line">cd /opt/zookeeper/conf</span><br><span class="line">cp zoo_sample.cfg zoo.cfg</span><br><span class="line">sed -i &#x27;s|dataDir=/tmp/zookeeper|dataDir=/opt/zookeeper/data|&#x27; zoo.cfg</span><br><span class="line"></span><br><span class="line"># 启动</span><br><span class="line">/opt/zookeeper/bin/zkServer.sh start</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
+<h2 id="四、环境验证"><a href="#四、环境验证" class="headerlink" title="四、环境验证"></a>四、环境验证</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 检查所有服务</span><br><span class="line">java -version</span><br><span class="line">hadoop version</span><br><span class="line">/opt/zookeeper/bin/zkServer.sh status</span><br></pre></td></tr></table></figure>
         </div>
 
         
@@ -248,7 +251,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://hope-5114.github.io/2025/06/03/hello-world/">https://hope-5114.github.io/2025/06/03/hello-world/</a></span>
+                        <span><a href="https://hope-5114.github.io/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">https://hope-5114.github.io/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</a></span>
                     </p>
                 
                 
@@ -271,6 +274,16 @@
                 <span>Tag(s):</span>
                 <span class="tag">
                     
+                    
+                        <a href="/tags/Spark/"># Spark</a>
+                    
+                        <a href="/tags/Hadoop/"># Hadoop</a>
+                    
+                        <a href="/tags/JDK/"># JDK</a>
+                    
+                        <a href="/tags/Zookeeper/"># Zookeeper</a>
+                    
+                        
                 </span>
             </div>
             <div>
@@ -281,8 +294,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">Spark基础环境配置</a>
             
+            <a class="next" rel="next" href="/2025/06/03/hello-world/">Hello World</a>
             
         </section>
 
