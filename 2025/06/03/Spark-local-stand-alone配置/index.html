@@ -1,234 +1,168 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Spark Local &amp; Standalone模式配置指南 | Hope</title><meta name="author" content="Cr"><meta name="copyright" content="Cr"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、Spark Local模式配置1. 安装Spark1234567891011# 下载Spark（建议使用国内镜像加速）wget https:&#x2F;&#x2F;mirrors.bfsu.edu.cn&#x2F;apache&#x2F;spark&#x2F;spark-3.5.0&#x2F;spark-3.5.0-bin-hadoop3.tgz# 解压并安装tar -xzf spark-3.5.0-bin-hadoop3.tgzsudo mv spa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark Local &amp; Standalone模式配置指南">
+<meta property="og:url" content="https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Hope">
+<meta property="og:description" content="一、Spark Local模式配置1. 安装Spark1234567891011# 下载Spark（建议使用国内镜像加速）wget https:&#x2F;&#x2F;mirrors.bfsu.edu.cn&#x2F;apache&#x2F;spark&#x2F;spark-3.5.0&#x2F;spark-3.5.0-bin-hadoop3.tgz# 解压并安装tar -xzf spark-3.5.0-bin-hadoop3.tgzsudo mv spa">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hope-5114.github.io/img/butterfly-icon.png">
+<meta property="article:published_time" content="2025-06-03T07:30:00.000Z">
+<meta property="article:modified_time" content="2025-06-04T06:12:04.624Z">
+<meta property="article:author" content="Cr">
+<meta property="article:tag" content="Spark">
+<meta property="article:tag" content="Local模式">
+<meta property="article:tag" content="Standalone模式">
+<meta property="article:tag" content="集群部署">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hope-5114.github.io/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Spark Local & Standalone模式配置指南",
+  "url": "https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/",
+  "image": "https://hope-5114.github.io/img/butterfly-icon.png",
+  "datePublished": "2025-06-03T07:30:00.000Z",
+  "dateModified": "2025-06-04T06:12:04.624Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cr",
+      "url": "https://hope-5114.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
 
-<head>
-    <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
-    <meta name="author" content="Cr">
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
-
-
-
-
-<title>Spark Local &amp; Standalone模式配置指南 | Hope</title>
-
-
-
-    <link rel="icon" href="/favicon.ico">
-
-
-
-
-    <!-- stylesheets list from _config.yml -->
+      const theme = saveToLocal.get('theme')
     
-    <link rel="stylesheet" href="/css/style.css">
-    
-
-
-
-    <!-- scripts list from _config.yml -->
-    
-    <script src="/js/script.js"></script>
-    
-    <script src="/js/tocbot.min.js"></script>
-    
-
-
-
-    
-    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
         
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
     
-
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body>
-    <script>
-        // this function is used to check current theme before page loaded.
-        (() => {
-            const pagebody = document.getElementsByTagName('body')[0]
-
-            function setTheme(status) {
-
-                if (status === 'dark') {
-                    window.sessionStorage.theme = 'dark'
-                    pagebody.classList.add('dark-theme');
-
-                } else if (status === 'light') {
-                    window.sessionStorage.theme = 'light'
-                    pagebody.classList.remove('dark-theme');
-                }
-            };
-
-            setTheme(window.sessionStorage.theme)
-        })();
-    </script>
-
-    <div class="wrapper">
-        <header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo"><a href="/">Cr</a></div>
-            <div class="menu navbar-right">
-                
-                <a class="menu-item" href="/archives">Posts</a>
-                
-                <a class="menu-item" href="/category">Categories</a>
-                
-                <a class="menu-item" href="/tag">Tags</a>
-                
-                <a class="menu-item" href="/about">About</a>
-                
-                
-                <input id="switch_default" type="checkbox" class="switch_default">
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
-
-    
-    <nav class="navbar-mobile" id="nav-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <a href="/">Cr</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
-                </div>
-                <div class="menu-toggle" onclick="mobileBtn()">
-                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
-                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
-                </div>
-            </div>
-            <div class="menu" id="mobile-menu">
-                
-                <a class="menu-item" href="/archives">Posts</a>
-                
-                <a class="menu-item" href="/category">Categories</a>
-                
-                <a class="menu-item" href="/tag">Tags</a>
-                
-                <a class="menu-item" href="/about">About</a>
-                
-            </div>
-        </div>
-    </nav>
-
-</header>
-<script>
-    var mobileBtn = function f() {
-        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
-        var mobileMenu = document.getElementById("mobile-menu");
-        if (toggleMenu.classList.contains("active")) {
-            toggleMenu.classList.remove("active")
-            mobileMenu.classList.remove("active")
-        } else {
-            toggleMenu.classList.add("active")
-            mobileMenu.classList.add("active")
-        }
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
     }
-</script>
-            <div class="main">
-                <div class="container">
-    
-    
-        <div class="post-toc">
-    <div class="tocbot-list">
-    </div>
-    <div class="tocbot-list-menu">
-        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
-        <a onclick="go_top()">Back to top</a>
-        <a onclick="go_bottom()">Go to bottom</a>
-    </div>
-</div>
-
-<script>
-    var tocbot_timer;
-    var DEPTH_MAX = 6; // 为 6 时展开所有
-    var tocbot_default_config = {
-        tocSelector: '.tocbot-list',
-        contentSelector: '.post-content',
-        headingSelector: 'h1, h2, h3, h4, h5',
-        orderedList: false,
-        scrollSmooth: true,
-        onClick: extend_click,
-    };
-
-    function extend_click() {
-        clearTimeout(tocbot_timer);
-        tocbot_timer = setTimeout(function() {
-            tocbot.refresh(obj_merge(tocbot_default_config, {
-                hasInnerContainers: true
-            }));
-        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
-    }
-
-    document.ready(function() {
-        tocbot.init(obj_merge(tocbot_default_config, {
-            collapseDepth: 1
-        }));
-    });
-
-    function expand_toc() {
-        var b = document.querySelector('.tocbot-toc-expand');
-        var expanded = b.getAttribute('data-expanded');
-        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
-        tocbot.refresh(obj_merge(tocbot_default_config, {
-            collapseDepth: expanded ? 1 : DEPTH_MAX
-        }));
-        b.innerText = expanded ? 'Expand all' : 'Collapse all';
-    }
-
-    function go_top() {
-        window.scrollTo(0, 0);
-    }
-
-    function go_bottom() {
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function obj_merge(target, source) {
-        for (var item in source) {
-            if (source.hasOwnProperty(item)) {
-                target[item] = source[item];
-            }
-        }
-        return target;
-    }
-</script>
-    
-
-    
-    <article class="post-wrap">
-        <header class="post-header">
-            <h1 class="post-title">Spark Local &amp; Standalone模式配置指南</h1>
-            
-                <div class="post-meta">
-                    
-                        Author: <a itemprop="author" rel="author" href="/">Cr</a>
-                    
-
-                    
-                        <span class="post-time">
-                        Date: <a href="#">六月 3, 2025&nbsp;&nbsp;15:30:00</a>
-                        </span>
-                    
-                    
-                        <span class="post-category">
-                    Category:
-                            
-                                <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF/">大数据技术</a>
-                            
-                        </span>
-                    
-                </div>
-            
-        </header>
-
-        <div class="post-content">
-            <h2 id="一、Spark-Local模式配置"><a href="#一、Spark-Local模式配置" class="headerlink" title="一、Spark Local模式配置"></a>一、Spark Local模式配置</h2><h3 id="1-安装Spark"><a href="#1-安装Spark" class="headerlink" title="1. 安装Spark"></a>1. 安装Spark</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载Spark（建议使用国内镜像加速）</span></span><br><span class="line">wget https://mirrors.bfsu.edu.cn/apache/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压并安装</span></span><br><span class="line">tar -xzf spark-3.5.0-bin-hadoop3.tgz</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mv</span> spark-3.5.0-bin-hadoop3 /opt/spark</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export SPARK_HOME=/opt/spark&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spark Local & Standalone模式配置指南',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Hope</span></a><a class="nav-page-title" href="/"><span class="site-name">Spark Local &amp; Standalone模式配置指南</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Spark Local &amp; Standalone模式配置指南</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-03T07:30:00.000Z" title="发表于 2025-06-03 15:30:00">2025-06-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-04T06:12:04.624Z" title="更新于 2025-06-04 14:12:04">2025-06-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF/">大数据技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="一、Spark-Local模式配置"><a href="#一、Spark-Local模式配置" class="headerlink" title="一、Spark Local模式配置"></a>一、Spark Local模式配置</h2><h3 id="1-安装Spark"><a href="#1-安装Spark" class="headerlink" title="1. 安装Spark"></a>1. 安装Spark</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载Spark（建议使用国内镜像加速）</span></span><br><span class="line">wget https://mirrors.bfsu.edu.cn/apache/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压并安装</span></span><br><span class="line">tar -xzf spark-3.5.0-bin-hadoop3.tgz</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mv</span> spark-3.5.0-bin-hadoop3 /opt/spark</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export SPARK_HOME=/opt/spark&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
 
 <h3 id="2-本地模式测试"><a href="#2-本地模式测试" class="headerlink" title="2. 本地模式测试"></a>2. 本地模式测试</h3><p>启动PySpark交互式环境：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspark</span><br></pre></td></tr></table></figure>
@@ -248,82 +182,4 @@
 <p><strong>从节点执行</strong>：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/spark/sbin/start-worker.sh spark://hadoop-master:7077</span><br></pre></td></tr></table></figure>
 
-<h3 id="3-提交分布式任务"><a href="#3-提交分布式任务" class="headerlink" title="3. 提交分布式任务"></a>3. 提交分布式任务</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spark-submit \</span><br><span class="line">  --master spark://hadoop-master:7077 \</span><br><span class="line">  --executor-memory 2G \</span><br><span class="line">  --total-executor-cores 8 \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  /opt/spark/examples/jars/spark-examples_2.12-3.5.0.jar 100</span><br></pre></td></tr></table></figure>
-        </div>
-
-        
-            <section class="post-copyright">
-                
-                    <p class="copyright-item">
-                        <span>Author:</span>
-                        <span>Cr</span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>Permalink:</span>
-                        <span><a href="https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/">https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/</a></span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>License:</span>
-                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
-                    </p>
-                
-                
-                     <p class="copyright-item">
-                         <span>Slogan:</span>
-                         <span>Do you believe in <strong>DESTINY</strong>?</span>
-                     </p>
-                
-
-            </section>
-        
-        <section class="post-tags">
-            <div>
-                <span>Tag(s):</span>
-                <span class="tag">
-                    
-                    
-                        <a href="/tags/Spark/"># Spark</a>
-                    
-                        <a href="/tags/Local%E6%A8%A1%E5%BC%8F/"># Local模式</a>
-                    
-                        <a href="/tags/Standalone%E6%A8%A1%E5%BC%8F/"># Standalone模式</a>
-                    
-                        <a href="/tags/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/"># 集群部署</a>
-                    
-                        
-                </span>
-            </div>
-            <div>
-                <a href="javascript:window.history.back();">back</a>
-                <span>· </span>
-                <a href="/">home</a>
-            </div>
-        </section>
-        <section class="post-nav">
-            
-                <a class="prev" rel="prev" href="/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">Spark基础环境配置</a>
-            
-            
-            <a class="next" rel="next" href="/2025/06/03/hello-world/">Hello World</a>
-            
-        </section>
-
-
-    </article>
-</div>
-
-            </div>
-            <footer id="footer" class="footer">
-    <div class="copyright">
-        <span>© Cr | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-    </div>
-</footer>
-
-    </div>
-</body>
-
-</html>
+<h3 id="3-提交分布式任务"><a href="#3-提交分布式任务" class="headerlink" title="3. 提交分布式任务"></a>3. 提交分布式任务</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spark-submit \</span><br><span class="line">  --master spark://hadoop-master:7077 \</span><br><span class="line">  --executor-memory 2G \</span><br><span class="line">  --total-executor-cores 8 \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  /opt/spark/examples/jars/spark-examples_2.12-3.5.0.jar 100</span><br></pre></td></tr></table></figure></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hope-5114.github.io">Cr</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/">https://hope-5114.github.io/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hope-5114.github.io" target="_blank">Hope</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spark/">Spark</a><a class="post-meta__tags" href="/tags/Local%E6%A8%A1%E5%BC%8F/">Local模式</a><a class="post-meta__tags" href="/tags/Standalone%E6%A8%A1%E5%BC%8F/">Standalone模式</a><a class="post-meta__tags" href="/tags/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">集群部署</a></div><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="Spark基础环境配置"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Spark基础环境配置</div></div><div class="info-2"><div class="info-item-1">一、环境准备1. JDK安装Spark运行需要Java环境，推荐JDK 8或11： 12345678910111213141516171819# Ubuntu/Debiansudo apt install openjdk-11-jdk# CentOS/RHELsudo yum install java-11-openjdk# 验证安装java -version# 下载Hadoop（以3.3.6为例）wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gztar -xzf hadoop-3.3.6.tar.gzmv hadoop-3.3.6 /opt/hadoop# 配置环境变量echo &#x27;export HADOOP_HOME=/opt/hadoop&#x27; &gt;&gt; ~/.bashrcecho &#x27;export PATH=$PATH:$HADOOP_HOME/bin&#x27; &gt;&gt; ~/.bashrcsource ~/.bashrc#...</div></div></div></a><a class="pagination-related" href="/2025/06/03/hello-world/" title="Hello World"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Hello World</div></div><div class="info-2"><div class="info-item-1">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="Spark基础环境配置"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-04</div><div class="info-item-2">Spark基础环境配置</div></div><div class="info-2"><div class="info-item-1">一、环境准备1. JDK安装Spark运行需要Java环境，推荐JDK 8或11： 12345678910111213141516171819# Ubuntu/Debiansudo apt install openjdk-11-jdk# CentOS/RHELsudo yum install java-11-openjdk# 验证安装java -version# 下载Hadoop（以3.3.6为例）wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gztar -xzf hadoop-3.3.6.tar.gzmv hadoop-3.3.6 /opt/hadoop# 配置环境变量echo &#x27;export HADOOP_HOME=/opt/hadoop&#x27; &gt;&gt; ~/.bashrcecho &#x27;export PATH=$PATH:$HADOOP_HOME/bin&#x27; &gt;&gt; ~/.bashrcsource ~/.bashrc#...</div></div></div></a><a class="pagination-related" href="/2025/06/04/Spark-HA-Yarn%E9%85%8D%E7%BD%AE/" title="Spark HA与Yarn集群配置指南"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-04</div><div class="info-item-2">Spark HA与Yarn集群配置指南</div></div><div class="info-2"><div class="info-item-1">一、Spark高可用(HA)配置1. 基于Zookeeper的HA配置编辑Spark环境配置文件 123456# Zookeeper集群地址（至少3个节点）export SPARK_DAEMON_JAVA_OPTS=&quot;-Dspark.deploy.recoveryMode=ZOOKEEPER-Dspark.deploy.zookeeper.url=zk1.example.com:2181,zk2.example.com:2181,zk3.example.com:2181-Dspark.deploy.zookeeper.dir=/spark-ha&quot;  一、Spark高可用(HA)配置1. 基于Zookeeper的HA配置编辑Spark环境配置文件 123456# Zookeeper集群地址（至少3个节点）export SPARK_DAEMON_JAVA_OPTS=&quot;-Dspark.deploy.recoveryMode=ZOOKEEPER-Dspark.deploy.zookeeper.url=zk1.example.com:2181,zk2.exam...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cr</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Spark-Local%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">一、Spark Local模式配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85Spark"><span class="toc-number">1.1.</span> <span class="toc-text">1. 安装Spark</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9C%AC%E5%9C%B0%E6%A8%A1%E5%BC%8F%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">2. 本地模式测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Spark-Standalone%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">二、Spark Standalone集群模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE"><span class="toc-number">2.1.</span> <span class="toc-text">1. 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.2.</span> <span class="toc-text">2. 启动集群服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%8F%90%E4%BA%A4%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1"><span class="toc-number">2.3.</span> <span class="toc-text">3. 提交分布式任务</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/04/Spark-HA-Yarn%E9%85%8D%E7%BD%AE/" title="Spark HA与Yarn集群配置指南">Spark HA与Yarn集群配置指南</a><time datetime="2025-06-04T06:25:24.000Z" title="发表于 2025-06-04 14:25:24">2025-06-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/04/Spark%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="Spark基础环境配置">Spark基础环境配置</a><time datetime="2025-06-04T05:19:30.000Z" title="发表于 2025-06-04 13:19:30">2025-06-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/03/Spark-local-stand-alone%E9%85%8D%E7%BD%AE/" title="Spark Local &amp; Standalone模式配置指南">Spark Local &amp; Standalone模式配置指南</a><time datetime="2025-06-03T07:30:00.000Z" title="发表于 2025-06-03 15:30:00">2025-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/03/hello-world/" title="Hello World">Hello World</a><time datetime="2025-06-03T06:03:41.639Z" title="发表于 2025-06-03 14:03:41">2025-06-03</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By Cr</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.0-b2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
